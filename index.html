@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수비니의 웹사이트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f3e9; /* 아이보리 배경 */
+        }
+        header {
+            background-color: #d3c0e4; /* 연보라 배경 */
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #d1a9d7; /* 연보라색 네비게이션 바 */
+        }
+        nav a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+        nav a:hover {
+            background-color: #b88cc4; /* 연보라색 강조 */
+        }
+        main {
+            display: flex;
+            padding: 20px;
+        }
+        section {
+            flex: 1;
+            padding: 20px;
+            margin: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        aside {
+            width: 250px;
+            padding: 20px;
+            background-color: #f0e6f7; /* 연보라 배경 */
+            margin-left: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        footer {
+            background-color: #d3c0e4;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        .visitor-counter {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #6c4f87;
+        }
+        input, button, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #d3c0e4; /* 연보라색 버튼 */
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #b88cc4;
+        }
+        a {
+            text-decoration: none;
+            color: #8e6eaf;
+        }
+        a:hover {
+            color: #6a4d85;
+        }
+        .guestbook {
+            margin-top: 20px;
+        }
+        .entry {
+            background: #f0e6f7;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .delete-btn {
+            background-color: #ff6666;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .delete-btn:hover {
+            background-color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>수비니의 웹사이트</h1>
+</header>
+
+<nav>
+    <a href="#">Home</a>
+    <a href="about.html">About</a>
+    <a href="#">Services</a>
+    <a href="#">Contact</a>
+</nav>
+
+<main>
+    <section>
+        <h2>이건바로</h2>
+        <p>지피티가 만들어준 웹사이트입니댜</p>
+
+        <!-- 회원가입 폼 -->
+        <h3>Sign Up for Updates</h3>
+        <form id="signupForm">
+            <input type="text" name="name" placeholder="Enter your name" required>
+            <input type="email" name="email" placeholder="Enter your email" required>
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <!-- 방명록 작성 -->
+        <h3>방명록 작성</h3>
+        <textarea id="guestbookInput" placeholder="방명록을 작성하세요..."></textarea>
+        <button onclick="addEntry()">작성하기</button>
+
+        <div class="guestbook">
+            <h3>📖 방명록</h3>
+            <div id="guestbookEntries"></div>
+        </div>
+    </section>
+
+    <!-- 사이드바 -->
+    <aside>
+        <h3>최근 글 목록</h3>
+        <ul>
+            <li><a href="#">Post 1</a></li>
+            <li><a href="#">Post 2</a></li>
+            <li><a href="#">Post 3</a></li>
+        </ul>
+        <h3>저희를 팔로우 해주세요</h3>
+        <p>나쁜 사람 아닙니다 😭</p>
+        <ul>
+            <li><a href="#">Facebook</a></li>
+            <li><a href="#">Twitter</a></li>
+            <li><a href="#">Instagram</a></li>
+        </ul>
+    </aside>
+</main>
+
+<footer>
+    <p>© 2025 Sample Website. 개구리왕눈이 협회에서 제공됨..</p>
+    <p class="visitor-counter">방문자 수: <span id="visitorCount">0</span></p>
+</footer>
+
+<script type="module">
+  // Firebase SDK 불러오기
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+  // Firebase 설정
+  const firebaseConfig = {
+    apiKey: "AIzaSyBhXlo8XRn5-5_kiscU0wVVImLRHbyEKwE",
+    authDomain: "subinweb-b1122.firebaseapp.com",
+    projectId: "subinweb-b1122",
+    storageBucket: "subinweb-b1122.firebasestorage.app",
+    messagingSenderId: "284203792802",
+    appId: "1:284203792802:web:b4dcdcac604c8a16d69afb"
+  };
+
+  // Firebase 초기화
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 방명록 작성 기능
+  async function addEntry() {
+    let input = document.getElementById("guestbookInput").value.trim();
+    if (!input) {
+      alert("내용을 입력하세요!");
+      return;
+    }
+
+    // Firestore에 방명록 추가
+    await addDoc(collection(db, "guestbook"), { message: input });
+
+    document.getElementById("guestbookInput").value = ""; // 입력창 초기화
+    loadEntries(); // 목록 새로 고침
+  }
+
+  // 방명록 불러오기
+  async function loadEntries() {
+    let entriesContainer = document.getElementById("guestbookEntries");
+    entriesContainer.innerHTML = ""; // 기존 목록 초기화
+
+    const querySnapshot = await getDocs(collection(db, "guestbook"));
+    querySnapshot.forEach((docData) => {
+      let entryDiv = document.createElement("div");
+      entryDiv.classList.add("entry");
+
+      let textSpan = document.createElement("span");
+      textSpan.textContent = docData.data().message;
+
+      let deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "삭제";
+      deleteBtn.classList.add("delete-btn");
+      deleteBtn.onclick = async function() {
+        await deleteDoc(doc(db, "guestbook", docData.id));
+        loadEntries();
+      };
+
+      entryDiv.appendChild(textSpan);
+      entryDiv.appendChild(deleteBtn);
+      entriesContainer.appendChild(entryDiv);
+    });
+  }
+
+  // 방문자 수 증가
+  document.addEventListener("DOMContentLoaded", function() {
+    let count = localStorage.getItem("visitorCount") || 0;
+    count = parseInt(count) + 1;
+    localStorage.setItem("visitorCount", count);
+    document.getElementById("visitorCount").textContent = count;
+
+    // 방명록 불러오기
+    loadEntries();
+  });
+
+  // 'Sign Up' 버튼 클릭 시 동작 추가
+  document.getElementById('signupForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    alert('회원가입 정보가 제출되었습니다!');
+  });
+</script>
+
+</body>
+</html>
